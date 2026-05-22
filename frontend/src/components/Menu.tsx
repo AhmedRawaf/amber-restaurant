@@ -1,8 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { HoverEffect } from "@/components/ui/card-hover-effect";
 import { MenuItem, MenuCategory } from "@/types";
-import axios from "axios";
 
 const STATIC_MENU: MenuItem[] = [
   { id: 1,  name: "Hummus Beiruti",        name_ar: "حمص بيروتي",             description: "Creamy chickpea dip",            description_ar: "حمص كريمي مع زيت الزيتون والأعشاب الطازجة",                           price: "25",  category: "appetizers", category_display: "المقبلات",          image: null, image_url: "/images/menu/حمص%20بيروتي.jpg",                is_featured: true,  is_available: true, spice_level: 0, calories: 320,  prep_time: 10  },
@@ -34,16 +33,9 @@ const CATEGORIES: { id: MenuCategory; label: string }[] = [
 ];
 
 export default function Menu() {
-  const [active,     setActive]     = useState<MenuCategory>("all");
-  const [menuItems,  setMenuItems]  = useState<MenuItem[]>(STATIC_MENU);
-  const [loading,    setLoading]    = useState(true);
-
-  useEffect(() => {
-    axios.get("/api/menu/")
-      .then((r) => { if (r.data?.length > 0) setMenuItems(r.data); })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
+  const [active,    setActive]    = useState<MenuCategory>("all");
+  const [menuItems] = useState<MenuItem[]>(STATIC_MENU);
+  const loading = false;
 
   const filtered = active === "all" ? menuItems : menuItems.filter(i => i.category === active);
 

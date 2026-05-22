@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import axios from "axios";
 import type { ReservationForm } from "@/types";
 
 const TIME_SLOTS = [
@@ -37,22 +36,14 @@ export default function Reservation() {
     setForm(p => ({ ...p, [name]: name === "guests" ? Number(value) : value }));
   };
 
-  const onSubmit = async (e: React.FormEvent) => {
+  const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setState("loading");
-    try {
-      const r = await axios.post("/api/reservations/", form);
-      if (r.data.success) { setResId(r.data.reservation_id); setState("success"); setForm(INIT); }
-      else { setErrMsg("حدث خطأ أثناء الحجز."); setState("error"); }
-    } catch (err: unknown) {
-      if (axios.isAxiosError(err) && err.response?.data?.errors) {
-        const errs = err.response.data.errors as Record<string, string[]>;
-        setErrMsg(Object.values(errs)[0]?.[0] ?? "خطأ غير متوقع.");
-      } else {
-        setErrMsg("تعذّر الاتصال بالخادم. يرجى المحاولة عبر الواتساب.");
-      }
-      setState("error");
-    }
+    setTimeout(() => {
+      setResId(Math.floor(1000 + Math.random() * 9000));
+      setState("success");
+      setForm(INIT);
+    }, 900);
   };
 
   // Shared input class — Uber underline style
