@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>عنبر | Amber Restaurant</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Be+Vietnam+Pro:wght@300;400;500;600&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary:  '#a73a00',
+            accent:   '#feb700',
+            bg:       '#fff9ed',
+            card:     '#f4e8bd',
+            'primary-dark': '#7d2b00',
+          },
+          fontFamily: {
+            heading: ['"Plus Jakarta Sans"', '"Tajawal"', 'sans-serif'],
+            body:    ['"Be Vietnam Pro"',    '"Tajawal"', 'sans-serif'],
+            arabic:  ['"Noto Naskh Arabic"', '"Tajawal"', 'serif'],
+            tajawal: ['"Tajawal"', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background-color: #fff9ed;
+      color: #1a0a00;
+      font-family: 'Tajawal', sans-serif;
+      direction: rtl;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* Dot pattern */
+    .dot-pattern {
+      background-image: radial-gradient(circle, rgba(167,58,0,0.12) 1.5px, transparent 1.5px);
+      background-size: 28px 28px;
+    }
+
+    /* Ticker marquee */
+    @keyframes ticker {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+    .ticker-track {
+      display: flex;
+      width: max-content;
+      animation: ticker 30s linear infinite;
+    }
+    .ticker-track:hover { animation-play-state: paused; }
+
+    /* Menu card hover */
+    .menu-card { position: relative; overflow: hidden; }
+    .menu-card img { transition: transform 0.5s ease; width: 100%; height: 100%; object-fit: cover; }
+    .menu-card:hover img { transform: scale(1.08); }
+    .menu-card-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(167,58,0,0.88) 0%, transparent 55%);
+      opacity: 0;
+      transition: opacity 0.35s ease;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 1.25rem;
+    }
+    .menu-card:hover .menu-card-overlay { opacity: 1; }
+
+    /* Card glow */
+    .card-glow { transition: box-shadow 0.3s ease, transform 0.3s ease; }
+    .card-glow:hover { box-shadow: 0 12px 40px rgba(167,58,0,0.18); transform: translateY(-4px); }
+
+    /* Middle testimonial raised */
+    .testimonial-mid { transform: translateY(-18px); box-shadow: 0 20px 60px rgba(167,58,0,0.20); }
+
+    /* Rotated about image */
+    .img-rotated { transform: rotate(-2.5deg); transition: transform 0.4s ease; }
+    .img-rotated:hover { transform: rotate(0deg); }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar       { width: 5px; }
+    ::-webkit-scrollbar-track { background: #f4e8bd; }
+    ::-webkit-scrollbar-thumb { background: #a73a00; border-radius: 3px; }
+
+    /* Selection */
+    ::selection { background: #a73a00; color: #fff; }
+
+    /* Nav link underline */
+    .nav-link { position: relative; color: #1a0a00; font-weight: 600; transition: color 0.2s; }
+    .nav-link::after { content: ''; position: absolute; bottom: -3px; right: 0; width: 0; height: 2px; background: #a73a00; transition: width 0.25s ease; }
+    .nav-link:hover { color: #a73a00; }
+    .nav-link:hover::after { width: 100%; }
+
+    /* Hero overlay */
+    .hero-overlay { background: linear-gradient(135deg, rgba(255,249,237,0.92) 40%, rgba(255,249,237,0.55) 100%); }
+
+    /* Gold gradient text — diacritics safe */
+    .gold-text {
+      background: linear-gradient(135deg, #feb700 0%, #d4930f 60%, #a06800 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      display: inline-block;
+      padding-top: 0.35em;
+      padding-bottom: 0.1em;
+      line-height: 1.8;
+      overflow: visible;
+    }
+
+    /* Section heading accent underline */
+    .section-heading { position: relative; display: inline-block; }
+    .section-heading::after {
+      content: '';
+      display: block;
+      width: 56px; height: 4px;
+      background: #feb700;
+      border-radius: 2px;
+      margin: 10px auto 0;
+    }
+
+    /* Wave SVG */
+    .wave-divider svg { display: block; }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════
+     1 · STICKY NAVBAR
+════════════════════════════ -->
+<nav id="navbar" class="sticky top-0 z-50 bg-[#fff9ed]/95 backdrop-blur border-b border-[#f4e8bd]"
+     style="box-shadow:0 2px 20px rgba(167,58,0,0.07);">
+  <div class="max-w-7xl mx-auto px-6 sm:px-10 flex items-center justify-between h-16">
+
+    <!-- Logo -->
+    <a href="#hero" class="flex items-center gap-2.5">
+      <div class="w-9 h-9 rounded-full flex items-center justify-center" style="background:#a73a00;">
+        <span class="text-white font-black text-base font-tajawal">ع</span>
+      </div>
+      <span class="font-black text-lg font-tajawal" style="color:#a73a00;">عنبر</span>
+    </a>
+
+    <!-- Desktop links -->
+    <div class="hidden md:flex items-center gap-8 text-sm font-tajawal">
+      <a href="#menu"         class="nav-link">القائمة</a>
+      <a href="#about"        class="nav-link">عن المطعم</a>
+      <a href="#testimonials" class="nav-link">آراء الضيوف</a>
+      <a href="#reservation"  class="nav-link">الحجز</a>
+    </div>
+
+    <!-- CTA -->
+    <a href="#reservation"
+       class="hidden md:inline-flex items-center gap-2 font-tajawal font-bold text-white text-sm px-6 py-2.5 rounded-full transition-all hover:opacity-85"
+       style="background:#a73a00;">
+      احجز الآن
+    </a>
+
+    <!-- Mobile hamburger -->
+    <button class="md:hidden p-2 rounded-lg" style="color:#a73a00;" onclick="toggleMenu()">
+      <svg id="icon-open"  class="w-6 h-6"        fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      <svg id="icon-close" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+    </button>
+  </div>
+
+  <!-- Mobile dropdown -->
+  <div id="mobile-menu" class="hidden md:hidden border-t border-[#f4e8bd] px-6 py-4 flex flex-col gap-4 font-tajawal text-sm font-semibold">
+    <a href="#menu"         class="hover:text-[#a73a00] transition-colors" onclick="toggleMenu()">القائمة</a>
+    <a href="#about"        class="hover:text-[#a73a00] transition-colors" onclick="toggleMenu()">عن المطعم</a>
+    <a href="#testimonials" class="hover:text-[#a73a00] transition-colors" onclick="toggleMenu()">آراء الضيوف</a>
+    <a href="#reservation"  class="hover:text-[#a73a00] transition-colors" onclick="toggleMenu()">الحجز</a>
+    <a href="#reservation"
+       class="inline-flex items-center justify-center font-bold text-white text-sm px-6 py-2.5 rounded-full mt-1"
+       style="background:#a73a00;" onclick="toggleMenu()">احجز الآن</a>
+  </div>
+</nav>
+
+
+<!-- ════════════════════════════
+     2 · HERO  (80vh)
+════════════════════════════ -->
+<section id="hero" class="relative overflow-hidden" style="min-height:80vh;">
+
+  <!-- Background image -->
+  <img src="frontend/public/images/hero/hero.jpg"
+       onerror="this.style.display='none'"
+       alt="أجواء المطعم"
+       class="absolute inset-0 w-full h-full object-cover" />
+
+  <!-- Dot-pattern fallback (shows when image fails) -->
+  <div class="absolute inset-0 dot-pattern" style="background-color:#fff9ed; z-index:0;"></div>
+
+  <!-- Gradient overlay -->
+  <div class="hero-overlay absolute inset-0" style="z-index:1;"></div>
+
+  <!-- Content -->
+  <div class="relative flex flex-col justify-center max-w-7xl mx-auto px-6 sm:px-10"
+       style="min-height:80vh; padding-top:80px; padding-bottom:100px; z-index:2;">
+    <div style="max-width:520px;">
+
+      <!-- Eyebrow -->
+      <span class="inline-flex items-center gap-2 font-tajawal text-xs font-bold uppercase tracking-widest rounded-full px-4 py-1.5 mb-6"
+            style="border:1px solid rgba(167,58,0,0.25); background:rgba(167,58,0,0.07); color:rgba(167,58,0,0.85);">
+        <span class="w-1.5 h-1.5 rounded-full" style="background:#a73a00;"></span>
+        مطعم فاخر في الرياض
+      </span>
+
+      <!-- Headline -->
+      <h1 class="font-tajawal font-black mb-4" style="font-size:clamp(2.6rem,6vw,4.5rem); line-height:1.25; color:#1a0a00;">
+        تجربة طعام
+        <span class="block" style="margin-top:10px;">
+          <span class="gold-text" style="font-family:'Noto Naskh Arabic','Tajawal',serif;">لا تُنسى</span>
+        </span>
+      </h1>
+
+      <!-- Divider -->
+      <div style="width:52px;height:4px;background:#feb700;border-radius:2px;margin-bottom:1.5rem;"></div>
+
+      <!-- Subtitle -->
+      <p class="font-tajawal text-lg leading-relaxed mb-10" style="color:#5a3020; max-width:420px;">
+        وصفات أصيلة تجمع بين عراقة المطبخ العربي وأرقى أساليب الطهي العالمية، في أجواء تنبض بالفخامة والأصالة.
+      </p>
+
+      <!-- CTAs -->
+      <div class="flex flex-wrap gap-3">
+        <a href="#menu"
+           class="inline-flex items-center justify-center font-tajawal font-bold text-white text-base px-8 py-4 rounded-full transition-all hover:opacity-85"
+           style="background:#a73a00;">
+          استكشف القائمة
+        </a>
+        <a href="#reservation"
+           class="inline-flex items-center justify-center font-tajawal font-bold text-base px-8 py-4 rounded-full border-2 transition-all"
+           style="color:#a73a00; border-color:#a73a00; background:transparent;"
+           onmouseover="this.style.background='#a73a00';this.style.color='#fff';"
+           onmouseout="this.style.background='transparent';this.style.color='#a73a00';">
+          احجز طاولتك
+        </a>
+      </div>
+
+      <!-- Stats -->
+      <div class="flex gap-10 mt-14 pt-8" style="border-top:1px solid rgba(167,58,0,0.15);">
+        <div>
+          <div class="font-black text-2xl font-tajawal" style="color:#a73a00;">+10</div>
+          <div class="text-sm font-tajawal mt-0.5" style="color:#7a5030;">سنوات خبرة</div>
+        </div>
+        <div>
+          <div class="font-black text-2xl font-tajawal" style="color:#a73a00;">+200</div>
+          <div class="text-sm font-tajawal mt-0.5" style="color:#7a5030;">طبق شهي</div>
+        </div>
+        <div>
+          <div class="font-black text-2xl font-tajawal" style="color:#a73a00;">+50K</div>
+          <div class="text-sm font-tajawal mt-0.5" style="color:#7a5030;">عميل سعيد</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Wave divider -->
+  <div class="wave-divider absolute bottom-0 left-0 right-0" style="z-index:3;">
+    <svg viewBox="0 0 1440 64" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="width:100%;height:64px;">
+      <path d="M0,32 C360,64 1080,0 1440,32 L1440,64 L0,64 Z" fill="#feb700" opacity="0.18"/>
+      <path d="M0,48 C480,16 960,64 1440,32 L1440,64 L0,64 Z" fill="#fff9ed"/>
+    </svg>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════
+     3 · TICKER STRIP
+════════════════════════════ -->
+<div style="background:#a73a00; overflow:hidden; padding:14px 0;">
+  <div class="ticker-track">
+    <div class="flex items-center">
+      <span class="inline-flex items-center gap-3 px-8 font-tajawal text-sm font-bold text-white whitespace-nowrap"><span style="color:#feb700;">✦</span> كبسة الملك الفاخرة</span>
+      <span class="inline-flex items-center gap-3 px-8 font-tajawal text-sm font-bold text-white whitespace-nowrap"><span style="color:#feb700;">✦</span> مندي اللحم الأصيل</span>
+      <span class="inline-flex items-center gap-3 px-8 font-tajawal text-sm font-bold text-white whitespace-nowrap"><span style="color:#feb700;">✦</span> مشاوي مشكلة ملكية</span>
+      <span class="inline-flex items-center gap-3 px-8 font-tajawal text-sm font-bold text-white whitespace-nowrap"><span style="color:#feb700;">✦</span> كنافة الزعفران الذهبية</span>
+      <span class="inline-flex items-center gap-3 px-8 font-tajawal text-sm font-bold text-white whitespace-nowrap"><span style="color:#feb700;">✦</span> قهوة عربية أصيلة</span>
+      <span class="inline-flex items-center gap-3 px-8 font-tajawal text-sm font-bold text-white whitespace-nowrap"><span style="color:#feb700;">✦</span> أوزي الضيافة</span>
+      <span class="inline-flex items-center gap-3 px-8 font-tajawal text-sm font-bold text-white whitespace-nowrap"><span style="color:#feb700;">✦</span> أم علي الشرقية</span>
+      <span class="inline-flex items-center gap-3 px-8 font-tajawal text-sm font-bold text-white whitespace-nowrap"><span style="color:#feb700;">✦</span> احجز طاولتك الآن</span>
+      <!-- Duplicate for seamless loop -->
+      <span class="inline-flex items-center gap-3 px-8 font-tajawal text-sm font-bold text-white whitespace-nowrap"><span style="color:#feb700;">✦</span> كبسة الملك الفاخرة</span>
+      <span class="inline-flex items-center gap-3 px-8 font-tajawal text-sm font-bold text-white whitespace-nowrap"><span style="color:#feb700;">✦</span> مندي اللحم الأصيل</span>
+      <span class="inline-flex items-center gap-3 px-8 font-tajawal text-sm font-bold text-white whitespace-nowrap"><span style="color:#feb700;">✦</span> مشاوي مشكلة ملكية</span>
+      <span class="inline-flex items-center gap-3 px-8 font-tajawal text-sm font-bold text-white whitespace-nowrap"><span style="color:#feb700;">✦</span> كنافة الزعفران الذهبية</span>
+      <span class="inline-flex items-center gap-3 px-8 font-tajawal text-sm font-bold text-white whitespace-nowrap"><span style="color:#feb700;">✦</span> قهوة عربية أصيلة</span>
+      <span class="inline-flex items-center gap-3 px-8 font-tajawal text-sm font-bold text-white whitespace-nowrap"><span style="color:#feb700;">✦</span> أوزي الضيافة</span>
+      <span class="inline-flex items-center gap-3 px-8 font-tajawal text-sm font-bold text-white whitespace-nowrap"><span style="color:#feb700;">✦</span> أم علي الشرقية</span>
+      <span class="inline-flex items-center gap-3 px-8 font-tajawal text-sm font-bold text-white whitespace-nowrap"><span style="color:#feb700;">✦</span> احجز طاولتك الآن</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════
+     4 · MENU GRID
+════════════════════════════ -->
+<section id="menu" style="background:#fff9ed; padding:96px 0;">
+  <div class="max-w-7xl mx-auto px-6 sm:px-10">
+
+    <!-- Header -->
+    <div class="text-center mb-14">
+      <span class="inline-flex items-center gap-2 font-tajawal text-xs font-bold uppercase tracking-widest rounded-full px-4 py-1.5 mb-4"
+            style="border:1px solid rgba(167,58,0,0.2); background:rgba(167,58,0,0.06); color:rgba(167,58,0,0.8);">
+        قائمة الطعام
+      </span>
+      <h2 class="section-heading font-tajawal font-black text-4xl md:text-5xl" style="color:#1a0a00;">
+        أشهى الأطباق
+      </h2>
+      <p class="font-tajawal text-base mt-5 mx-auto" style="color:#7a5030; max-width:400px;">
+        من المطبخ العربي الأصيل — مختارات يومية بأيدي أمهر الطهاة
+      </p>
+    </div>
+
+    <!-- Category tabs -->
+    <div class="flex flex-wrap justify-center gap-2 mb-10">
+      <button class="cat-btn font-tajawal font-bold text-sm px-5 py-2 rounded-full transition-all" data-cat="all"
+              style="background:#a73a00; color:#fff; border:1px solid #a73a00;">الكل</button>
+      <button class="cat-btn font-tajawal font-bold text-sm px-5 py-2 rounded-full transition-all" data-cat="starters"
+              style="background:#f4e8bd; color:#a73a00; border:1px solid #f4e8bd;">المقبلات</button>
+      <button class="cat-btn font-tajawal font-bold text-sm px-5 py-2 rounded-full transition-all" data-cat="mains"
+              style="background:#f4e8bd; color:#a73a00; border:1px solid #f4e8bd;">الأطباق الرئيسية</button>
+      <button class="cat-btn font-tajawal font-bold text-sm px-5 py-2 rounded-full transition-all" data-cat="desserts"
+              style="background:#f4e8bd; color:#a73a00; border:1px solid #f4e8bd;">الحلويات</button>
+      <button class="cat-btn font-tajawal font-bold text-sm px-5 py-2 rounded-full transition-all" data-cat="drinks"
+              style="background:#f4e8bd; color:#a73a00; border:1px solid #f4e8bd;">المشروبات</button>
+    </div>
+
+    <!-- Grid -->
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5" id="menu-grid">
+
+      <div class="menu-card rounded-2xl overflow-hidden card-glow bg-white" data-cat="starters" style="border:1px solid #f4e8bd; height:280px;">
+        <img src="frontend/public/images/menu/حمص بيروتي.jpg" onerror="this.src='https://images.unsplash.com/photo-1576577445504-6af96477db52?w=400&q=80'" alt="حمص بيروتي" />
+        <div class="menu-card-overlay"><span class="font-tajawal font-bold text-white text-base">حمص بيروتي</span><span class="font-tajawal text-white/70 text-xs mt-0.5">35 ر.س</span></div>
+      </div>
+
+      <div class="menu-card rounded-2xl overflow-hidden card-glow bg-white" data-cat="starters" style="border:1px solid #f4e8bd; height:280px;">
+        <img src="frontend/public/images/menu/سلطة فتوش.jpg" onerror="this.src='https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&q=80'" alt="سلطة فتوش" />
+        <div class="menu-card-overlay"><span class="font-tajawal font-bold text-white text-base">سلطة فتوش</span><span class="font-tajawal text-white/70 text-xs mt-0.5">30 ر.س</span></div>
+      </div>
+
+      <div class="menu-card rounded-2xl overflow-hidden card-glow bg-white" data-cat="starters" style="border:1px solid #f4e8bd; height:280px;">
+        <img src="frontend/public/images/menu/كبة مقلية.jpg" onerror="this.src='https://images.unsplash.com/photo-1574484284002-952d92456975?w=400&q=80'" alt="كبة مقلية" />
+        <div class="menu-card-overlay"><span class="font-tajawal font-bold text-white text-base">كبة مقلية</span><span class="font-tajawal text-white/70 text-xs mt-0.5">28 ر.س</span></div>
+      </div>
+
+      <div class="menu-card rounded-2xl overflow-hidden card-glow bg-white" data-cat="starters" style="border:1px solid #f4e8bd; height:280px;">
+        <img src="frontend/public/images/menu/مطبق.jpg" onerror="this.src='https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80'" alt="مطبق" />
+        <div class="menu-card-overlay"><span class="font-tajawal font-bold text-white text-base">مطبق</span><span class="font-tajawal text-white/70 text-xs mt-0.5">22 ر.س</span></div>
+      </div>
+
+      <div class="menu-card rounded-2xl overflow-hidden card-glow bg-white" data-cat="mains" style="border:1px solid #f4e8bd; height:280px;">
+        <img src="frontend/public/images/menu/كبسة الملك.jpg" onerror="this.src='https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400&q=80'" alt="كبسة الملك" />
+        <div class="menu-card-overlay"><span class="font-tajawal font-bold text-white text-base">كبسة الملك</span><span class="font-tajawal text-white/70 text-xs mt-0.5">85 ر.س</span></div>
+      </div>
+
+      <div class="menu-card rounded-2xl overflow-hidden card-glow bg-white" data-cat="mains" style="border:1px solid #f4e8bd; height:280px;">
+        <img src="frontend/public/images/menu/مندي لحم.jpg" onerror="this.src='https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&q=80'" alt="مندي لحم" />
+        <div class="menu-card-overlay"><span class="font-tajawal font-bold text-white text-base">مندي لحم</span><span class="font-tajawal text-white/70 text-xs mt-0.5">90 ر.س</span></div>
+      </div>
+
+      <div class="menu-card rounded-2xl overflow-hidden card-glow bg-white" data-cat="mains" style="border:1px solid #f4e8bd; height:280px;">
+        <img src="frontend/public/images/menu/مشاوي مشكلة ملكية.jpg" onerror="this.src='https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=400&q=80'" alt="مشاوي ملكية" />
+        <div class="menu-card-overlay"><span class="font-tajawal font-bold text-white text-base">مشاوي مشكلة ملكية</span><span class="font-tajawal text-white/70 text-xs mt-0.5">120 ر.س</span></div>
+      </div>
+
+      <div class="menu-card rounded-2xl overflow-hidden card-glow bg-white" data-cat="mains" style="border:1px solid #f4e8bd; height:280px;">
+        <img src="frontend/public/images/menu/أوزي.jpg" onerror="this.src='https://images.unsplash.com/photo-1574484284002-952d92456975?w=400&q=80'" alt="أوزي" />
+        <div class="menu-card-overlay"><span class="font-tajawal font-bold text-white text-base">أوزي الضيافة</span><span class="font-tajawal text-white/70 text-xs mt-0.5">95 ر.س</span></div>
+      </div>
+
+      <div class="menu-card rounded-2xl overflow-hidden card-glow bg-white" data-cat="mains" style="border:1px solid #f4e8bd; height:280px;">
+        <img src="frontend/public/images/menu/طبق المأكولات البحرية.jpg" onerror="this.src='https://images.unsplash.com/photo-1559847844-5315695dadae?w=400&q=80'" alt="مأكولات بحرية" />
+        <div class="menu-card-overlay"><span class="font-tajawal font-bold text-white text-base">طبق المأكولات البحرية</span><span class="font-tajawal text-white/70 text-xs mt-0.5">110 ر.س</span></div>
+      </div>
+
+      <div class="menu-card rounded-2xl overflow-hidden card-glow bg-white" data-cat="desserts" style="border:1px solid #f4e8bd; height:280px;">
+        <img src="frontend/public/images/menu/أم علي.jpg" onerror="this.src='https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=400&q=80'" alt="أم علي" />
+        <div class="menu-card-overlay"><span class="font-tajawal font-bold text-white text-base">أم علي</span><span class="font-tajawal text-white/70 text-xs mt-0.5">35 ر.س</span></div>
+      </div>
+
+      <div class="menu-card rounded-2xl overflow-hidden card-glow bg-white" data-cat="desserts" style="border:1px solid #f4e8bd; height:280px;">
+        <img src="frontend/public/images/menu/كنافة الزعفران.jpg" onerror="this.src='https://images.unsplash.com/photo-1606303885842-b8a51cff5fa1?w=400&q=80'" alt="كنافة الزعفران" />
+        <div class="menu-card-overlay"><span class="font-tajawal font-bold text-white text-base">كنافة الزعفران</span><span class="font-tajawal text-white/70 text-xs mt-0.5">40 ر.س</span></div>
+      </div>
+
+      <div class="menu-card rounded-2xl overflow-hidden card-glow bg-white" data-cat="desserts" style="border:1px solid #f4e8bd; height:280px;">
+        <img src="frontend/public/images/menu/بقلاوة ملكية.jpg" onerror="this.src='https://images.unsplash.com/photo-1596797038530-2c107229654b?w=400&q=80'" alt="بقلاوة ملكية" />
+        <div class="menu-card-overlay"><span class="font-tajawal font-bold text-white text-base">بقلاوة ملكية</span><span class="font-tajawal text-white/70 text-xs mt-0.5">30 ر.س</span></div>
+      </div>
+
+      <div class="menu-card rounded-2xl overflow-hidden card-glow bg-white" data-cat="desserts" style="border:1px solid #f4e8bd; height:280px;">
+        <img src="frontend/public/images/menu/مهلبية.jpg" onerror="this.src='https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&q=80'" alt="مهلبية" />
+        <div class="menu-card-overlay"><span class="font-tajawal font-bold text-white text-base">مهلبية</span><span class="font-tajawal text-white/70 text-xs mt-0.5">25 ر.س</span></div>
+      </div>
+
+      <div class="menu-card rounded-2xl overflow-hidden card-glow bg-white" data-cat="drinks" style="border:1px solid #f4e8bd; height:280px;">
+        <img src="frontend/public/images/menu/قهوة عربية.jpg" onerror="this.src='https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=400&q=80'" alt="قهوة عربية" />
+        <div class="menu-card-overlay"><span class="font-tajawal font-bold text-white text-base">قهوة عربية</span><span class="font-tajawal text-white/70 text-xs mt-0.5">15 ر.س</span></div>
+      </div>
+
+      <div class="menu-card rounded-2xl overflow-hidden card-glow bg-white" data-cat="drinks" style="border:1px solid #f4e8bd; height:280px;">
+        <img src="frontend/public/images/menu/شاي مغربي بالنعناع.jpg" onerror="this.src='https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=400&q=80'" alt="شاي مغربي" />
+        <div class="menu-card-overlay"><span class="font-tajawal font-bold text-white text-base">شاي مغربي بالنعناع</span><span class="font-tajawal text-white/70 text-xs mt-0.5">18 ر.س</span></div>
+      </div>
+
+      <div class="menu-card rounded-2xl overflow-hidden card-glow bg-white" data-cat="drinks" style="border:1px solid #f4e8bd; height:280px;">
+        <img src="frontend/public/images/menu/عصير رمان طازج.jpg" onerror="this.src='https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=400&q=80'" alt="عصير رمان" />
+        <div class="menu-card-overlay"><span class="font-tajawal font-bold text-white text-base">عصير رمان طازج</span><span class="font-tajawal text-white/70 text-xs mt-0.5">20 ر.س</span></div>
+      </div>
+
+      <div class="menu-card rounded-2xl overflow-hidden card-glow bg-white" data-cat="drinks" style="border:1px solid #f4e8bd; height:280px;">
+        <img src="frontend/public/images/menu/جلاب.jpg" onerror="this.src='https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400&q=80'" alt="جلاب" />
+        <div class="menu-card-overlay"><span class="font-tajawal font-bold text-white text-base">جلاب</span><span class="font-tajawal text-white/70 text-xs mt-0.5">16 ر.س</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════
+     5 · TESTIMONIALS
+════════════════════════════ -->
+<section id="testimonials" style="background:#f4e8bd; padding:96px 0;">
+  <div class="max-w-6xl mx-auto px-6 sm:px-10">
+
+    <div class="text-center mb-16">
+      <span class="inline-flex items-center gap-2 font-tajawal text-xs font-bold uppercase tracking-widest rounded-full px-4 py-1.5 mb-4"
+            style="border:1px solid rgba(167,58,0,0.2); background:rgba(167,58,0,0.08); color:rgba(167,58,0,0.85);">
+        آراء الضيوف
+      </span>
+      <h2 class="section-heading font-tajawal font-black text-4xl md:text-5xl" style="color:#1a0a00;">
+        ماذا يقولون عنّا
+      </h2>
+    </div>
+
+    <!-- 3 cards — middle raised -->
+    <div class="grid md:grid-cols-3 gap-6 items-center">
+
+      <div class="rounded-3xl p-8 card-glow" style="background:#fff9ed; border:1px solid #e8d9b0;">
+        <div class="flex gap-1 mb-5">
+          <svg class="w-4 h-4" fill="#feb700" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg class="w-4 h-4" fill="#feb700" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg class="w-4 h-4" fill="#feb700" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg class="w-4 h-4" fill="#feb700" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg class="w-4 h-4" fill="#feb700" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+        </div>
+        <p class="font-tajawal text-base leading-relaxed mb-6" style="color:#3d1a06;">"من أفضل تجارب الطعام في الرياض. الكبسة رائعة والخدمة راقية جداً. سأعود حتماً مع عائلتي."</p>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center font-black text-white text-sm font-tajawal" style="background:#a73a00;">خ</div>
+          <div><div class="font-tajawal font-bold text-sm" style="color:#1a0a00;">خالد العتيبي</div><div class="font-tajawal text-xs" style="color:#9a6040;">الرياض</div></div>
+        </div>
+      </div>
+
+      <!-- Middle card — raised + burgundy bg -->
+      <div class="testimonial-mid rounded-3xl p-8" style="background:#a73a00;">
+        <div class="flex gap-1 mb-5">
+          <svg class="w-4 h-4" fill="#feb700" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg class="w-4 h-4" fill="#feb700" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg class="w-4 h-4" fill="#feb700" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg class="w-4 h-4" fill="#feb700" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg class="w-4 h-4" fill="#feb700" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+        </div>
+        <p class="font-tajawal text-base leading-relaxed mb-6" style="color:rgba(255,255,255,0.9);">"الأجواء فخمة والمندي يذكّرني بأصيل الطعام اليمني. ما شاء الله على المطعم، تجربة تستحق كل ريال."</p>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center font-black text-sm font-tajawal" style="background:#feb700; color:#1a0a00;">س</div>
+          <div><div class="font-tajawal font-bold text-sm text-white">سارة الشمري</div><div class="font-tajawal text-xs" style="color:rgba(255,255,255,0.6);">جدة</div></div>
+        </div>
+      </div>
+
+      <div class="rounded-3xl p-8 card-glow" style="background:#fff9ed; border:1px solid #e8d9b0;">
+        <div class="flex gap-1 mb-5">
+          <svg class="w-4 h-4" fill="#feb700" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg class="w-4 h-4" fill="#feb700" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg class="w-4 h-4" fill="#feb700" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg class="w-4 h-4" fill="#feb700" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg class="w-4 h-4" fill="#feb700" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+        </div>
+        <p class="font-tajawal text-base leading-relaxed mb-6" style="color:#3d1a06;">"زرت المطعم في إفطار رمضان وكانت تجربة استثنائية — الأجواء والأكل والطاقم كلهم على أعلى مستوى."</p>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center font-black text-white text-sm font-tajawal" style="background:#a73a00;">ف</div>
+          <div><div class="font-tajawal font-bold text-sm" style="color:#1a0a00;">فيصل الدوسري</div><div class="font-tajawal text-xs" style="color:#9a6040;">الدمام</div></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Rating summary -->
+    <div class="text-center mt-14">
+      <div class="inline-flex items-center gap-3 rounded-2xl px-8 py-4"
+           style="background:rgba(167,58,0,0.08); border:1px solid rgba(167,58,0,0.15);">
+        <span class="font-black text-3xl font-tajawal" style="color:#a73a00;">4.9</span>
+        <div>
+          <div class="flex gap-0.5 mb-0.5">
+            <svg class="w-4 h-4" fill="#feb700" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-4 h-4" fill="#feb700" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-4 h-4" fill="#feb700" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-4 h-4" fill="#feb700" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-4 h-4" fill="#feb700" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          </div>
+          <div class="font-tajawal text-xs" style="color:#9a6040;">+2000 تقييم موثّق</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════
+     6 · ABOUT  (2-col)
+════════════════════════════ -->
+<section id="about" class="dot-pattern" style="background-color:#fff9ed; padding:96px 0;">
+  <div class="max-w-7xl mx-auto px-6 sm:px-10">
+    <div class="grid lg:grid-cols-2 gap-16 items-center">
+
+      <!-- Image side -->
+      <div class="relative flex justify-center order-2 lg:order-1">
+        <div class="absolute -bottom-5 -right-5 w-56 h-56 rounded-3xl" style="background:#f4e8bd; z-index:0;"></div>
+        <div class="absolute -top-5 -left-5 w-32 h-32 rounded-2xl" style="background:rgba(254,183,0,0.2); z-index:0;"></div>
+
+        <div class="relative z-10 img-rotated rounded-3xl overflow-hidden shadow-2xl" style="width:380px; height:460px; max-width:100%;">
+          <img src="frontend/public/images/menu/مشاوي مشكلة ملكية.jpg"
+               onerror="this.src='https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=500&q=80'"
+               alt="أجواء المطعم" class="w-full h-full object-cover" />
+        </div>
+
+        <!-- Badge -->
+        <div class="absolute bottom-8 -left-4 rounded-2xl px-5 py-4 z-20 shadow-lg" style="background:#a73a00;">
+          <div class="font-black text-2xl text-white font-tajawal">+10</div>
+          <div class="text-xs font-tajawal" style="color:rgba(255,255,255,0.7);">سنوات من التميّز</div>
+        </div>
+      </div>
+
+      <!-- Text side -->
+      <div class="order-1 lg:order-2">
+        <span class="inline-flex items-center gap-2 font-tajawal text-xs font-bold uppercase tracking-widest rounded-full px-4 py-1.5 mb-6"
+              style="border:1px solid rgba(167,58,0,0.2); background:rgba(167,58,0,0.07); color:rgba(167,58,0,0.85);">
+          قصتنا
+        </span>
+
+        <h2 class="font-tajawal font-black text-4xl md:text-5xl mb-1" style="color:#1a0a00; line-height:1.2;">من قلب الموروث</h2>
+        <h2 class="font-tajawal font-black text-4xl md:text-5xl mb-6" style="color:#a73a00; line-height:1.2;">إلى طاولتك</h2>
+
+        <div style="width:52px;height:4px;background:#feb700;border-radius:2px;margin-bottom:1.5rem;"></div>
+
+        <p class="font-tajawal text-lg leading-relaxed mb-5" style="color:#5a3020;">
+          تأسّس مطعم عنبر قبل أكثر من عشر سنوات برؤية واحدة: تقديم المطبخ العربي الأصيل بمعايير عالمية، في أجواء تجمع بين الحنين والفخامة.
+        </p>
+        <p class="font-tajawal text-base leading-relaxed mb-10" style="color:#7a5030;">
+          طهاتنا تلقّوا تدريبهم على أيدي أمهر الأساتذة، ومكوّناتنا تُنتقى يومياً من أجود المصادر، لأن كل طبق عندنا هو وعد بتجربة لا تُنسى.
+        </p>
+
+        <div class="flex flex-col gap-4 mb-10">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0" style="background:rgba(167,58,0,0.12);">
+              <svg class="w-4 h-4" fill="none" stroke="#a73a00" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <span class="font-tajawal font-medium text-sm" style="color:#3d1a06;">مكوّنات طازجة من أجود المصادر يومياً</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0" style="background:rgba(167,58,0,0.12);">
+              <svg class="w-4 h-4" fill="none" stroke="#a73a00" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <span class="font-tajawal font-medium text-sm" style="color:#3d1a06;">وصفات أصيلة متوارثة عبر الأجيال</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0" style="background:rgba(167,58,0,0.12);">
+              <svg class="w-4 h-4" fill="none" stroke="#a73a00" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <span class="font-tajawal font-medium text-sm" style="color:#3d1a06;">خدمة فاخرة وأجواء استثنائية</span>
+          </div>
+        </div>
+
+        <a href="#reservation"
+           class="inline-flex items-center gap-2 font-tajawal font-bold text-white text-sm px-8 py-4 rounded-full transition-all hover:opacity-85"
+           style="background:#a73a00;">
+          احجز تجربتك الآن
+          <svg class="w-4 h-4 rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════
+     6.5 · RESERVATION
+════════════════════════════ -->
+<section id="reservation" style="background:#f4e8bd; padding:96px 0;">
+  <div class="max-w-3xl mx-auto px-6 sm:px-10">
+    <div class="text-center mb-12">
+      <span class="inline-flex items-center gap-2 font-tajawal text-xs font-bold uppercase tracking-widest rounded-full px-4 py-1.5 mb-4"
+            style="border:1px solid rgba(167,58,0,0.2); background:rgba(167,58,0,0.07); color:rgba(167,58,0,0.85);">
+        الحجز
+      </span>
+      <h2 class="section-heading font-tajawal font-black text-4xl md:text-5xl" style="color:#1a0a00;">احجز طاولتك</h2>
+      <p class="font-tajawal text-base mt-5" style="color:#7a5030;">احجز مكانك الآن واستمتع بتجربة طعام فاخرة لا تُنسى</p>
+    </div>
+
+    <form id="reservation-form" class="rounded-3xl p-8 sm:p-10 shadow-sm"
+          style="background:#fff9ed; border:1px solid #e8d9b0;"
+          onsubmit="handleReservation(event)">
+      <div class="grid sm:grid-cols-2 gap-6 mb-6">
+        <div>
+          <label class="font-tajawal text-sm font-bold mb-2 block" style="color:#3d1a06;">الاسم الكامل</label>
+          <input type="text" required placeholder="أدخل اسمك"
+                 class="w-full bg-transparent border-b-2 font-tajawal text-base py-3 px-0 outline-none transition-colors"
+                 style="border-color:#e8d9b0; color:#1a0a00;"
+                 onfocus="this.style.borderColor='#a73a00'" onblur="this.style.borderColor='#e8d9b0'" />
+        </div>
+        <div>
+          <label class="font-tajawal text-sm font-bold mb-2 block" style="color:#3d1a06;">رقم الجوال</label>
+          <input type="tel" required placeholder="05XXXXXXXX"
+                 class="w-full bg-transparent border-b-2 font-tajawal text-base py-3 px-0 outline-none transition-colors"
+                 style="border-color:#e8d9b0; color:#1a0a00;"
+                 onfocus="this.style.borderColor='#a73a00'" onblur="this.style.borderColor='#e8d9b0'" />
+        </div>
+        <div>
+          <label class="font-tajawal text-sm font-bold mb-2 block" style="color:#3d1a06;">التاريخ</label>
+          <input type="date" required
+                 class="w-full bg-transparent border-b-2 font-tajawal text-base py-3 px-0 outline-none transition-colors"
+                 style="border-color:#e8d9b0; color:#1a0a00;"
+                 onfocus="this.style.borderColor='#a73a00'" onblur="this.style.borderColor='#e8d9b0'" />
+        </div>
+        <div>
+          <label class="font-tajawal text-sm font-bold mb-2 block" style="color:#3d1a06;">عدد الأشخاص</label>
+          <select required class="w-full bg-transparent border-b-2 font-tajawal text-base py-3 px-0 outline-none transition-colors"
+                  style="border-color:#e8d9b0; color:#1a0a00;"
+                  onfocus="this.style.borderColor='#a73a00'" onblur="this.style.borderColor='#e8d9b0'">
+            <option value="">اختر العدد</option>
+            <option>1 شخص</option>
+            <option>2 شخص</option>
+            <option>3-4 أشخاص</option>
+            <option>5-6 أشخاص</option>
+            <option>7+ أشخاص</option>
+          </select>
+        </div>
+      </div>
+      <div class="mb-8">
+        <label class="font-tajawal text-sm font-bold mb-2 block" style="color:#3d1a06;">ملاحظات (اختياري)</label>
+        <textarea rows="3" placeholder="أي طلبات خاصة..."
+                  class="w-full bg-transparent border-b-2 font-tajawal text-base py-3 px-0 outline-none transition-colors resize-none"
+                  style="border-color:#e8d9b0; color:#1a0a00;"
+                  onfocus="this.style.borderColor='#a73a00'" onblur="this.style.borderColor='#e8d9b0'"></textarea>
+      </div>
+      <button type="submit"
+              class="w-full font-tajawal font-bold text-white text-base py-4 rounded-2xl transition-all hover:opacity-85"
+              style="background:#a73a00;">
+        تأكيد الحجز
+      </button>
+    </form>
+
+    <div id="reservation-success" class="hidden rounded-3xl p-12 text-center mt-8" style="background:#a73a00;">
+      <div class="text-5xl mb-4">🎉</div>
+      <h3 class="font-tajawal font-black text-2xl text-white mb-2">تم تأكيد حجزك!</h3>
+      <p class="font-tajawal text-base" style="color:rgba(255,255,255,0.8);">سنتواصل معك قريباً لتأكيد التفاصيل. شكراً لاختيارك عنبر.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════
+     7 · FOOTER
+════════════════════════════ -->
+<footer style="background:#2C1610; padding:56px 0 32px;">
+  <div class="max-w-7xl mx-auto px-6 sm:px-10">
+    <div class="grid md:grid-cols-3 gap-12 mb-12">
+
+      <div>
+        <div class="flex items-center gap-2.5 mb-4">
+          <div class="w-9 h-9 rounded-full flex items-center justify-center" style="background:#a73a00;">
+            <span class="text-white font-black text-base font-tajawal">ع</span>
+          </div>
+          <span class="font-black text-xl text-white font-tajawal">عنبر</span>
+        </div>
+        <p class="font-tajawal text-sm leading-relaxed" style="color:rgba(255,255,255,0.5); max-width:260px;">
+          مطعم فاخر يقدم أرقى المأكولات العربية الأصيلة في قلب الرياض، منذ أكثر من عشر سنوات.
+        </p>
+      </div>
+
+      <div>
+        <h4 class="font-tajawal font-bold text-white text-sm mb-5">روابط سريعة</h4>
+        <div class="flex flex-col gap-3">
+          <a href="#menu"         class="font-tajawal text-sm transition-colors hover:text-white" style="color:rgba(255,255,255,0.5);">القائمة</a>
+          <a href="#about"        class="font-tajawal text-sm transition-colors hover:text-white" style="color:rgba(255,255,255,0.5);">عن المطعم</a>
+          <a href="#testimonials" class="font-tajawal text-sm transition-colors hover:text-white" style="color:rgba(255,255,255,0.5);">آراء الضيوف</a>
+          <a href="#reservation"  class="font-tajawal text-sm transition-colors hover:text-white" style="color:rgba(255,255,255,0.5);">الحجز</a>
+        </div>
+      </div>
+
+      <div>
+        <h4 class="font-tajawal font-bold text-white text-sm mb-5">تواصل معنا</h4>
+        <div class="flex flex-col gap-3">
+          <div class="flex items-center gap-2">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="#a73a00" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            <span class="font-tajawal text-sm" style="color:rgba(255,255,255,0.5);">الرياض، حي النزهة</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="#a73a00" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+            <span class="font-tajawal text-sm" style="color:rgba(255,255,255,0.5);">966-50-000-0000+</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="#a73a00" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span class="font-tajawal text-sm" style="color:rgba(255,255,255,0.5);">يومياً: 12:00 — 23:30</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="border-t pt-6 flex flex-col sm:flex-row items-center justify-between gap-3"
+         style="border-color:rgba(255,255,255,0.08);">
+      <p class="font-tajawal text-xs" style="color:rgba(255,255,255,0.3);">© 2025 مطعم عنبر. جميع الحقوق محفوظة.</p>
+      <div class="flex gap-4">
+        <a href="#" class="font-tajawal text-xs transition-colors hover:text-white" style="color:rgba(255,255,255,0.3);">سياسة الخصوصية</a>
+        <a href="#" class="font-tajawal text-xs transition-colors hover:text-white" style="color:rgba(255,255,255,0.3);">الشروط والأحكام</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+<!-- ══════ SCRIPTS ══════ -->
+<script>
+  function toggleMenu() {
+    const menu  = document.getElementById('mobile-menu');
+    const open  = document.getElementById('icon-open');
+    const close = document.getElementById('icon-close');
+    menu.classList.toggle('hidden');
+    open.classList.toggle('hidden');
+    close.classList.toggle('hidden');
+  }
+
+  // Category filter
+  document.querySelectorAll('.cat-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const cat = btn.dataset.cat;
+
+      document.querySelectorAll('.cat-btn').forEach(b => {
+        b.style.background = '#f4e8bd';
+        b.style.color = '#a73a00';
+        b.style.borderColor = '#f4e8bd';
+      });
+      btn.style.background = '#a73a00';
+      btn.style.color = '#fff';
+      btn.style.borderColor = '#a73a00';
+
+      document.querySelectorAll('#menu-grid > div').forEach(item => {
+        item.style.display = (cat === 'all' || item.dataset.cat === cat) ? '' : 'none';
+      });
+    });
+  });
+
+  // Reservation form
+  function handleReservation(e) {
+    e.preventDefault();
+    document.getElementById('reservation-form').style.display = 'none';
+    document.getElementById('reservation-success').classList.remove('hidden');
+  }
+
+  // Navbar scroll shadow
+  window.addEventListener('scroll', () => {
+    document.getElementById('navbar').style.boxShadow =
+      window.scrollY > 10
+        ? '0 4px 30px rgba(167,58,0,0.14)'
+        : '0 2px 20px rgba(167,58,0,0.07)';
+  });
+</script>
+</body>
+</html>

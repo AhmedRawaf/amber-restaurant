@@ -1,0 +1,206 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --black: #2C1610;
+    --white: #ffffff;
+    --cream: #fff9ed;
+    --burgundy: #a73a00;
+    --gray1: #f4e8bd;
+    --gray2: #e8d9b0;
+    --gray4: #7a5030;
+    --gold:  #feb700;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background-color: #fff9ed;
+    color: #1a0a00;
+    font-family: "Tajawal", sans-serif;
+    direction: rtl;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  ::selection { background-color: #a73a00; color: #ffffff; }
+
+  ::-webkit-scrollbar       { width: 5px; }
+  ::-webkit-scrollbar-track { background: #f4e8bd; }
+  ::-webkit-scrollbar-thumb { background: #a73a00; border-radius: 3px; }
+}
+
+@layer components {
+
+  /* ── Typography helpers ── */
+  .headline {
+    @apply font-tajawal font-black leading-tight tracking-tight text-black;
+  }
+
+  .section-title {
+    @apply font-tajawal font-black text-4xl md:text-5xl lg:text-6xl leading-tight mb-4;
+    color: #1C0E08;
+  }
+
+  .section-title-white {
+    @apply font-tajawal font-black text-4xl md:text-5xl lg:text-6xl leading-tight text-white mb-4;
+  }
+
+  .section-subtitle {
+    @apply font-tajawal text-lg md:text-xl font-normal text-uber-gray4 leading-relaxed;
+  }
+
+  .section-subtitle-white {
+    @apply font-tajawal text-lg md:text-xl font-normal text-white/60 leading-relaxed;
+  }
+
+  /* ── Dividers ── */
+  .gold-divider {
+    width: 48px;
+    height: 4px;
+    background: #feb700;
+    border-radius: 2px;
+  }
+
+  /* ── Buttons ── */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 font-tajawal font-bold
+           text-white px-7 py-3.5 rounded-full text-sm
+           transition-all duration-200;
+    background-color: #a73a00;
+  }
+  .btn-primary:hover  { background-color: #7d2b00; transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 font-tajawal font-bold
+           bg-white px-7 py-3.5 rounded-full text-sm border-2
+           transition-all duration-200;
+    color: #a73a00;
+    border-color: #a73a00;
+  }
+  .btn-secondary:hover  { background: #a73a00; color: #fff; }
+
+  .btn-white {
+    @apply inline-flex items-center justify-center gap-2 font-tajawal font-bold
+           bg-white text-black px-7 py-3.5 rounded-full text-sm
+           transition-all duration-200;
+  }
+  .btn-white:hover  { opacity: 0.88; }
+
+  .btn-outline-white {
+    @apply inline-flex items-center justify-center gap-2 font-tajawal font-bold
+           bg-transparent text-white border-2 border-white/40 px-7 py-3.5 rounded-full text-sm
+           transition-all duration-200;
+  }
+  .btn-outline-white:hover { border-color: white; }
+
+  /* backward-compat aliases */
+  .btn-gold         { @apply btn-primary; }
+  .btn-outline-gold { @apply btn-secondary; }
+
+  /* ── Cards ── */
+  .uber-card {
+    @apply bg-white rounded-2xl border border-uber-border overflow-hidden
+           transition-all duration-200;
+  }
+  .uber-card:hover {
+    box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+    transform: translateY(-2px);
+  }
+
+  /* ── Glass card (reviews, contact panels) ── */
+  .glass-card {
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(8px);
+    border: 1px solid #E2E2E2;
+    border-radius: 16px;
+  }
+
+  /* ── Form inputs — underline style ── */
+  .uber-input {
+    @apply w-full bg-transparent border-0 border-b-2 border-uber-border
+           font-tajawal text-base py-3 px-0 placeholder-uber-gray4
+           focus:outline-none transition-colors duration-200;
+    color: #1C0E08;
+  }
+  .uber-input:focus { border-color: #a73a00; }
+
+  /* ── Section wrappers ── */
+  .section-light { background: #fff9ed; }
+  .section-gray  { background: #f4e8bd; }
+  .section-black { background: #2C1610; }
+
+  /* ── Gold accent text ── */
+  .gold-gradient-text {
+    background: linear-gradient(135deg, #feb700 0%, #d4930f 60%, #a06800 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: inline-block;
+    /* Extra room so diacritics above/below letters are not clipped */
+    padding-top: 0.35em;
+    padding-bottom: 0.15em;
+    line-height: 1.1;
+    overflow: visible;
+  }
+
+  /* ── Arabic text with tashkeel/diacritics ── */
+  .arabic-tashkeel {
+    font-family: "Noto Naskh Arabic", "Tajawal", serif;
+    line-height: 2.2;
+    overflow: visible;
+    padding-top: 0.3em;
+  }
+
+  /* ── Pill label (eyebrow text) ── */
+  .pill-label {
+    @apply inline-flex items-center gap-2 font-tajawal text-xs font-bold
+           uppercase tracking-widest rounded-full
+           px-4 py-1.5 mb-6;
+    border: 1px solid rgba(167,58,0,0.25);
+    background: rgba(167,58,0,0.07);
+    color: rgba(167,58,0,0.85);
+  }
+
+  .pill-label-white {
+    @apply inline-flex items-center gap-2 font-tajawal text-xs font-bold
+           uppercase tracking-widest border border-white/25 rounded-full
+           px-4 py-1.5 bg-white/10 text-white/60 mb-6;
+  }
+}
+
+@layer utilities {
+  .text-balance { text-wrap: balance; }
+}
+
+/* Scroll animation for reviews */
+@keyframes scroll {
+  to { transform: translate(calc(-50% - 0.5rem)); }
+}
+.animate-scroll {
+  animation: scroll var(--animation-duration, 40s) var(--animation-direction, forwards) linear infinite;
+}
+
+/* WhatsApp pulse */
+@keyframes pulseGreen {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(37,211,102,0.5); }
+  60%       { box-shadow: 0 0 0 14px rgba(37,211,102,0); }
+}
+.pulse-green { animation: pulseGreen 2s infinite; }
+
+/* Dot pattern background */
+.dot-pattern {
+  background-image: radial-gradient(circle, rgba(167,58,0,0.12) 1.5px, transparent 1.5px);
+  background-size: 28px 28px;
+}
+
+/* Page wrapper */
+.page-container {
+  min-height: 100vh;
+  background: #fff9ed;
+}
