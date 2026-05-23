@@ -1,5 +1,5 @@
-import { motion } from "framer-motion";
-import { InfiniteMovingCards } from "@/components/ui/infinite-moving-cards";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const REVIEWS = [
   { quote: "تجربة طعام لا تُنسى! المندي كان استثنائياً بمعنى الكلمة، والخدمة رفيعة المستوى جداً. يستحق كل ريال. سأعود مع عائلتي قريباً.", name: "محمد العتيبي",   title: "رجل أعمال، الرياض",   rating: 5 },
@@ -12,10 +12,35 @@ const REVIEWS = [
   { quote: "مطعم يعكس الهوية السعودية الأصيلة بأسلوب عصري رائع. الطعام شهي جداً والخدمة لا تقل عن خمس نجوم.",                               name: "ريم العنزي",     title: "مصممة أزياء، الرياض", rating: 5 },
 ];
 
-export default function Reviews() {
+const variants = {
+  enter: (dir: number) => ({ x: dir > 0 ? 100 : -100, opacity: 0 }),
+  center: { x: 0, opacity: 1 },
+  exit:  (dir: number) => ({ x: dir > 0 ? -100 : 100, opacity: 0 }),
+};
+
+function ArrowButton({ onClick, children }: { onClick: () => void; children: React.ReactNode }) {
   return (
-    <section id="reviews" className="section-light py-24 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-5 sm:px-8">
+    <button
+      onClick={onClick}
+      className="shrink-0 w-11 h-11 rounded-full flex items-center justify-center border transition-all duration-200 hover:scale-105 active:scale-95"
+      style={{ background: "#fff9ed", borderColor: "#e8d9b0", color: "#a73a00" }}
+    >
+      {children}
+    </button>
+  );
+}
+
+export default function Reviews() {
+  const [[current, dir], setPage] = useState([0, 0]);
+
+  const go = (newDir: number) =>
+    setPage(([cur]) => [(cur + newDir + REVIEWS.length) % REVIEWS.length, newDir]);
+
+  const item = REVIEWS[current];
+
+  return (
+    <section id="reviews" className="section-light py-24">
+      <div className="max-w-4xl mx-auto px-5 sm:px-8">
 
         {/* Header */}
         <motion.div
@@ -46,19 +71,95 @@ export default function Reviews() {
             </div>
           </div>
         </motion.div>
-      </div>
 
-      {/* Moving cards — full width */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
-        className="space-y-5"
-      >
-        <InfiniteMovingCards items={REVIEWS.slice(0, 5)} direction="left"  speed="normal" />
-        <InfiniteMovingCards items={REVIEWS.slice(3)}    direction="right" speed="slow"   />
-      </motion.div>
+        {/* Slider row */}
+        <div className="flex items-center gap-4">
+
+          {/* Left arrow — previous */}
+          <ArrowButton onClick={() => go(-1)}>
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7"/>
+            </svg>
+          </ArrowButton>
+
+          {/* Card */}
+          <div className="flex-1 overflow-hidden">
+            <AnimatePresence mode="wait" custom={dir}>
+              <motion.div
+                key={current}
+                custom={dir}
+                variants={variants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="rounded-2xl px-8 py-8"
+                style={{ background: "#fff9ed", border: "1px solid #e8d9b0" }}
+              >
+                {/* Stars */}
+                <div className="flex gap-1 mb-4" dir="ltr">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <svg
+                      key={i}
+                      className="w-4 h-4"
+                      fill={i < item.rating ? "#feb700" : "#e8d9b0"}
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                    </svg>
+                  ))}
+                </div>
+
+                {/* Quote */}
+                <p className="font-tajawal text-base leading-relaxed mb-6" style={{ color: "#2C1610" }}>
+                  &ldquo;{item.quote}&rdquo;
+                </p>
+
+                {/* Author */}
+                <div className="flex items-center gap-3 border-t pt-5" style={{ borderColor: "#e8d9b0" }}>
+                  <div
+                    className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
+                    style={{ background: "#a73a00" }}
+                  >
+                    <span className="text-white text-sm font-bold font-tajawal">
+                      {item.name.charAt(0)}
+                    </span>
+                  </div>
+                  <div>
+                    <p className="font-tajawal font-bold text-sm" style={{ color: "#1C0E08" }}>{item.name}</p>
+                    <p className="font-tajawal text-xs" style={{ color: "#9a8070" }}>{item.title}</p>
+                  </div>
+                  <span className="mr-auto font-tajawal text-xs" style={{ color: "#c9a96e" }}>
+                    {current + 1} / {REVIEWS.length}
+                  </span>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* Right arrow — next */}
+          <ArrowButton onClick={() => go(1)}>
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/>
+            </svg>
+          </ArrowButton>
+        </div>
+
+        {/* Dot indicators */}
+        <div className="flex justify-center gap-2 mt-8">
+          {REVIEWS.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setPage(([cur]) => [i, i > cur ? 1 : -1])}
+              className="h-2 rounded-full transition-all duration-300"
+              style={{
+                width: i === current ? "24px" : "8px",
+                background: i === current ? "#a73a00" : "#e8d9b0",
+              }}
+            />
+          ))}
+        </div>
+      </div>
     </section>
   );
 }
