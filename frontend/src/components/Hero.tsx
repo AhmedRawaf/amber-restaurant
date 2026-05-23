@@ -15,13 +15,76 @@ export default function Hero() {
       <div className="flex-1 grid lg:grid-cols-2 min-h-[calc(100vh-64px)]">
 
         {/* ── Right column: text (RTL renders this first) ── */}
-        <div className="flex flex-col justify-center px-8 sm:px-12 lg:px-16 xl:px-20 py-16 lg:py-0 order-1">
+        <div className="flex flex-col justify-center px-8 sm:px-12 lg:px-16 xl:px-20 py-16 lg:py-0 order-1 relative overflow-hidden">
 
-          {/* Eyebrow */}
-          <motion.span className="pill-label" {...fadeUp(0)}>
-            <span className="w-1.5 h-1.5 rounded-full bg-black/40" />
-            مطعم فاخر في الرياض
-          </motion.span>
+          {/* ── Islamic geometric background rosette ── */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <svg className="w-[500px] h-[500px]" viewBox="-120 -120 240 240" fill="none" style={{ opacity: 0.07 }}>
+              <circle r="110" stroke="#c9982a" strokeWidth="1.5"/>
+              <circle r="88"  stroke="#c9982a" strokeWidth="0.5"/>
+              <circle r="28"  stroke="#c9982a" strokeWidth="1"/>
+              <circle r="9"   fill="#c9982a"/>
+              {/* outer 8-pointed star */}
+              <path fill="#c9982a" opacity="0.55"
+                d="M 80,0 L 30.5,12.6 L 56.6,56.6 L 12.6,30.5 L 0,80
+                   L -12.6,30.5 L -56.6,56.6 L -30.5,12.6 L -80,0
+                   L -30.5,-12.6 L -56.6,-56.6 L -12.6,-30.5 L 0,-80
+                   L 12.6,-30.5 L 56.6,-56.6 L 30.5,-12.6 Z"/>
+              {/* inner star rotated 22.5° */}
+              <path fill="#c9982a" opacity="0.35" transform="rotate(22.5)"
+                d="M 50,0 L 19.1,7.9 L 35.4,35.4 L 7.9,19.1 L 0,50
+                   L -7.9,19.1 L -35.4,35.4 L -19.1,7.9 L -50,0
+                   L -19.1,-7.9 L -35.4,-35.4 L -7.9,-19.1 L 0,-50
+                   L 7.9,-19.1 L 35.4,-35.4 L 19.1,-7.9 Z"/>
+              {/* 16 radiating spokes */}
+              {[0,22.5,45,67.5,90,112.5,135,157.5,180,202.5,225,247.5,270,292.5,315,337.5].map((deg, i) => {
+                const r = deg * Math.PI / 180;
+                return <line key={i} x1={28*Math.cos(r)} y1={28*Math.sin(r)} x2={88*Math.cos(r)} y2={88*Math.sin(r)} stroke="#c9982a" strokeWidth="0.4"/>;
+              })}
+              {/* diamond accents at ring */}
+              {[0,45,90,135,180,225,270,315].map((deg, i) => {
+                const r = deg * Math.PI / 180;
+                const cx = 88*Math.cos(r), cy = 88*Math.sin(r);
+                return <polygon key={i} points={`${cx},${cy-5} ${cx+4},${cy} ${cx},${cy+5} ${cx-4},${cy}`} fill="#c9982a" opacity="0.8" transform={`rotate(${deg},${cx},${cy})`}/>;
+              })}
+            </svg>
+          </div>
+
+          {/* ── Top-right corner fan (mosque lattice) ── */}
+          <div className="absolute top-0 right-0 pointer-events-none" style={{ opacity: 0.13 }}>
+            <svg width="180" height="180" viewBox="0 0 180 180" fill="none">
+              {/* concentric quarter-arcs centred at corner (180,0) */}
+              <path d="M 0,0 A 180,180 0 0,0 180,180" stroke="#c9982a" strokeWidth="1.5"/>
+              <path d="M 45,0 A 135,135 0 0,0 180,135" stroke="#c9982a" strokeWidth="1"/>
+              <path d="M 90,0 A 90,90 0 0,0 180,90"   stroke="#c9982a" strokeWidth="0.8"/>
+              <path d="M 135,0 A 45,45 0 0,0 180,45"  stroke="#c9982a" strokeWidth="0.6"/>
+              {/* radial lines from corner */}
+              <line x1="180" y1="0" x2="0"    y2="103.9" stroke="#c9982a" strokeWidth="0.5"/>
+              <line x1="180" y1="0" x2="0"    y2="180"   stroke="#c9982a" strokeWidth="0.7"/>
+              <line x1="180" y1="0" x2="76.1" y2="180"   stroke="#c9982a" strokeWidth="0.5"/>
+              {/* accent dots at arc–radial intersections */}
+              <circle cx="180"  cy="0"    r="5"   fill="#c9982a" opacity="0.8"/>
+              <circle cx="116.4" cy="63.6" r="3"  fill="#c9982a" opacity="0.6"/>
+              <circle cx="84.5"  cy="95.5" r="2.5" fill="#c9982a" opacity="0.4"/>
+            </svg>
+          </div>
+
+          {/* ── Bottom-left corner fan ── */}
+          <div className="absolute bottom-0 left-0 pointer-events-none" style={{ opacity: 0.09 }}>
+            <svg width="140" height="140" viewBox="0 0 140 140" fill="none">
+              {/* arcs centred at (0,140) */}
+              <path d="M 0,0   A 140,140 0 0,1 140,140" stroke="#c9982a" strokeWidth="1.5"/>
+              <path d="M 0,35  A 105,105 0 0,1 105,140" stroke="#c9982a" strokeWidth="1"/>
+              <path d="M 0,70  A 70,70   0 0,1 70,140"  stroke="#c9982a" strokeWidth="0.8"/>
+              <path d="M 0,105 A 35,35   0 0,1 35,140"  stroke="#c9982a" strokeWidth="0.6"/>
+              <line x1="0" y1="140" x2="140"  y2="0"    stroke="#c9982a" strokeWidth="0.7"/>
+              <line x1="0" y1="140" x2="140"  y2="59.2" stroke="#c9982a" strokeWidth="0.5"/>
+              <line x1="0" y1="140" x2="80.8" y2="0"    stroke="#c9982a" strokeWidth="0.5"/>
+              <circle cx="0"    cy="140" r="5"   fill="#c9982a" opacity="0.8"/>
+              <circle cx="49.5" cy="90.5" r="3"  fill="#c9982a" opacity="0.5"/>
+              <circle cx="74.2" cy="65.8" r="2"  fill="#c9982a" opacity="0.3"/>
+            </svg>
+          </div>
 
           {/* Headline */}
           <motion.h1
