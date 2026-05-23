@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const REVIEWS = [
@@ -12,10 +12,11 @@ const REVIEWS = [
   { quote: "مطعم يعكس الهوية السعودية الأصيلة بأسلوب عصري رائع. الطعام شهي جداً والخدمة لا تقل عن خمس نجوم.",                               name: "ريم العنزي",     title: "مصممة أزياء، الرياض", rating: 5 },
 ];
 
+// RTL: dir=1 means forward (slides in from left), dir=-1 means back (slides in from right)
 const variants = {
-  enter: (dir: number) => ({ x: dir > 0 ? 100 : -100, opacity: 0 }),
+  enter: (dir: number) => ({ x: dir > 0 ? -100 : 100, opacity: 0 }),
   center: { x: 0, opacity: 1 },
-  exit:  (dir: number) => ({ x: dir > 0 ? -100 : 100, opacity: 0 }),
+  exit:  (dir: number) => ({ x: dir > 0 ?  100 : -100, opacity: 0 }),
 };
 
 function ArrowButton({ onClick, children }: { onClick: () => void; children: React.ReactNode }) {
@@ -32,9 +33,22 @@ function ArrowButton({ onClick, children }: { onClick: () => void; children: Rea
 
 export default function Reviews() {
   const [[current, dir], setPage] = useState([0, 0]);
+  const [timerKey, setTimerKey] = useState(0);
 
-  const go = (newDir: number) =>
+  const go = useCallback((newDir: number) => {
     setPage(([cur]) => [(cur + newDir + REVIEWS.length) % REVIEWS.length, newDir]);
+  }, []);
+
+  const handleArrow = (newDir: number) => {
+    go(newDir);
+    setTimerKey(k => k + 1); // reset auto-advance timer
+  };
+
+  // Auto-advance every 4 seconds; resets when user clicks an arrow
+  useEffect(() => {
+    const id = setInterval(() => go(1), 4000);
+    return () => clearInterval(id);
+  }, [timerKey, go]);
 
   const item = REVIEWS[current];
 
@@ -75,10 +89,10 @@ export default function Reviews() {
         {/* Slider row */}
         <div className="flex items-center gap-4">
 
-          {/* Left arrow — previous */}
-          <ArrowButton onClick={() => go(-1)}>
+          {/* Right arrow — go back (RTL: right = previous) */}
+          <ArrowButton onClick={() => handleArrow(-1)}>
             <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7"/>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/>
             </svg>
           </ArrowButton>
 
@@ -92,19 +106,14 @@ export default function Reviews() {
                 initial="enter"
                 animate="center"
                 exit="exit"
-                transition={{ duration: 0.3, ease: "easeInOut" }}
+                transition={{ duration: 0.35, ease: "easeInOut" }}
                 className="rounded-2xl px-8 py-8"
                 style={{ background: "#fff9ed", border: "1px solid #e8d9b0" }}
               >
                 {/* Stars */}
                 <div className="flex gap-1 mb-4" dir="ltr">
                   {Array.from({ length: 5 }).map((_, i) => (
-                    <svg
-                      key={i}
-                      className="w-4 h-4"
-                      fill={i < item.rating ? "#feb700" : "#e8d9b0"}
-                      viewBox="0 0 20 20"
-                    >
+                    <svg key={i} className="w-4 h-4" fill={i < item.rating ? "#feb700" : "#e8d9b0"} viewBox="0 0 20 20">
                       <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                     </svg>
                   ))}
@@ -117,13 +126,8 @@ export default function Reviews() {
 
                 {/* Author */}
                 <div className="flex items-center gap-3 border-t pt-5" style={{ borderColor: "#e8d9b0" }}>
-                  <div
-                    className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
-                    style={{ background: "#a73a00" }}
-                  >
-                    <span className="text-white text-sm font-bold font-tajawal">
-                      {item.name.charAt(0)}
-                    </span>
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ background: "#a73a00" }}>
+                    <span className="text-white text-sm font-bold font-tajawal">{item.name.charAt(0)}</span>
                   </div>
                   <div>
                     <p className="font-tajawal font-bold text-sm" style={{ color: "#1C0E08" }}>{item.name}</p>
@@ -137,10 +141,10 @@ export default function Reviews() {
             </AnimatePresence>
           </div>
 
-          {/* Right arrow — next */}
-          <ArrowButton onClick={() => go(1)}>
+          {/* Left arrow — go forward (RTL: left = next) */}
+          <ArrowButton onClick={() => handleArrow(1)}>
             <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7"/>
             </svg>
           </ArrowButton>
         </div>
@@ -150,7 +154,10 @@ export default function Reviews() {
           {REVIEWS.map((_, i) => (
             <button
               key={i}
-              onClick={() => setPage(([cur]) => [i, i > cur ? 1 : -1])}
+              onClick={() => {
+                setPage(([cur]) => [i, i > cur ? 1 : -1]);
+                setTimerKey(k => k + 1);
+              }}
               className="h-2 rounded-full transition-all duration-300"
               style={{
                 width: i === current ? "24px" : "8px",
