@@ -12,11 +12,10 @@ const REVIEWS = [
   { quote: "مطعم يعكس الهوية السعودية الأصيلة بأسلوب عصري رائع. الطعام شهي جداً والخدمة لا تقل عن خمس نجوم.",                               name: "ريم العنزي",     title: "مصممة أزياء، الرياض", rating: 5 },
 ];
 
-// RTL: dir=1 means forward (slides in from left), dir=-1 means back (slides in from right)
 const variants = {
-  enter: (dir: number) => ({ x: dir > 0 ? -100 : 100, opacity: 0 }),
+  enter: (dir: number) => ({ x: dir > 0 ? 100 : -100, opacity: 0 }),
   center: { x: 0, opacity: 1 },
-  exit:  (dir: number) => ({ x: dir > 0 ?  100 : -100, opacity: 0 }),
+  exit:  (dir: number) => ({ x: dir > 0 ? -100 : 100, opacity: 0 }),
 };
 
 function ArrowButton({ onClick, children }: { onClick: () => void; children: React.ReactNode }) {
@@ -89,10 +88,10 @@ export default function Reviews() {
         {/* Slider row */}
         <div className="flex items-center gap-4">
 
-          {/* Right arrow — go back (RTL: right = previous) */}
+          {/* Left arrow — previous */}
           <ArrowButton onClick={() => handleArrow(-1)}>
             <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7"/>
             </svg>
           </ArrowButton>
 
@@ -141,10 +140,10 @@ export default function Reviews() {
             </AnimatePresence>
           </div>
 
-          {/* Left arrow — go forward (RTL: left = next) */}
+          {/* Right arrow — next */}
           <ArrowButton onClick={() => handleArrow(1)}>
             <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7"/>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/>
             </svg>
           </ArrowButton>
         </div>
