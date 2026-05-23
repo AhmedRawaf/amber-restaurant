@@ -87,7 +87,7 @@ function MenuCard({ item }: { item: MenuItem }) {
 
         {/* Meta */}
         <div className="flex items-center gap-3 mt-4 pt-4 border-t border-uber-border text-xs text-uber-gray4 font-tajawal">
-          <span>{"🔥".repeat(Math.max(1, item.spice_level))}</span>
+          <span>🔥</span>
           {item.calories && <span>{item.calories} سعرة</span>}
           {item.prep_time && (
             <span className="mr-auto flex items-center gap-1">
